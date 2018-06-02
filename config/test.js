@@ -1,0 +1,1 @@
+module.exports = 'mongodb://localhost:27017/northcoders_news_test';
