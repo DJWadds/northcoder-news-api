@@ -4,32 +4,61 @@
 
 This is the backend API for Northcoder News. This works with a MongoDB database. Hosted on Heroku and mlab.
 
-### Mongoose Documentation
-
-To find out more about how the backend works, it was built with MongoDB and the Documentation can be found below.
-
-* [find](http://mongoosejs.com/docs/api.html#model_Model.find)
-* [findOne](http://mongoosejs.com/docs/api.html#model_Model.findOne)
-* [findById](http://mongoosejs.com/docs/api.html#model_Model.findById)
-* [findByIdAndUpdate](http://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate)
-
-### Step 1 - Seeding
-
-Data has been provided for both testing and development environments so you will need to write a seed function to seed your database. You should think about how you will write your seed file to use either test data or dev data depending on the environment that you're running in.
-
-1.  You will need to seed the topics, followed by the articles and the users. Each article should belong to a topic, referenced by a topic's \_id property. Each article should also have a random number of comments. Each comment should have been created by a random user (referenced by their \_id property) and should also belong to a specific article (referenced by its \_id property too). Use a library such as [faker](https://www.npmjs.com/package/faker) or [chance](https://www.npmjs.com/package/chance) to generate random comments.
-
-### Step 2 - Building and Testing
-
-1.  Build your Express App
-2.  Mount an API Router onto your app
-3.  Define the routes described below
-4.  Define controller functions for each of your routes
-5.  Use proper project configuration from the offset, being sure to treat development and test differently.
-6.  Test each route as you go. Remember to test the happy and the unhappy paths! Make sure your error messages are helpful and your error status codes are chosen correctly. Remember to seed the test database using the seeding function and make the saved data available to use within your test suite.
-7.  Once you have all your routes start to tackle responding with the vote and comment counts on article requests like this http://northcoders-news-api.herokuapp.com/api/articles
-
-**HINT** Make sure to drop and reseed your test database with every test. This will make it much easier to keep track of your data throughout. In order for this to work, you are going to need to keep track of the MongoIDs your seeded docs have been given. In order to do this, you might want to consider what your seed file returns, and how you can use this in your tests.
+IMPORTANT
++Before using the api locally you must have mongo running. Please type mongod into the terminal to get this running.
++
+ Running the tests
+-Run npm test and the test will run.
++To run the tests all you need to do is run the commend npm test, please note due to this being asyncrenous it may take longer than normal. You do not need to worry about reseeding the database before each test as this is done for you. To see more open the spec folder and see the index.spec.js file.
+ 
+ Break down into end to end tests
+-Each test has two aspects, the first checks the route returns the right data 
+-
+-Give an example
+-And coding style tests
+-Explain what these tests test and why
++The tests are broken down by number and letter. the numbers refer to 
++    1) /api
++    2) /api/topics
++    3) /api/article
++    4) /api/comments
++    5) /api/users
++
++The letter then refers to which sub route is being tested. To understand each test better please read the comment in the it block. 
++
++        it('2a. get /api/topics returns all the possible topics', () => {
++            return request
++            .get(`/api/topics`)
++            .expect(200)
++            .then(({ body: {topics: [firstTopic, secondTopic]} }) => {
++                expect(firstTopic.title).to.equal('Mitch');
++                expect(firstTopic.slug).to.equal('mitch');
++                expect(secondTopic.title).to.equal('Cats');
++                expect(secondTopic.slug).to.equal('cats');
++            });
++        });
++
++The test above is checking the /api/topics route which if it works should return an object with the key topics which holds an array of topic objects. It first checks the status returns as 200 and then waits for all the information to return. Finally it checks that the first and second objects have the right values. 
++
++Special note
++        let topicDocs, userDocs, articleDocs, commentDocs;
++        let firstTopicDoc, firstUserDoc, firstArticleDoc, firstCommentDoc;
++        beforeEach(() => {
++        return seedDB(topicsData, usersData, articlesData)
++        .then((data) => {
++            [topicDocs, userDocs, articleDocs, commentDocs] = data;
++            [[firstTopicDoc], [firstUserDoc], [firstArticleDoc], [firstCommentDoc]] = data;
++        });
++        });
++
++The above runs before each test. It sets the XDocs to all the data returned from the database. Then the firstXDocs deconstructs to set these variables to the first item in each array. This allows better readability later on.
++
++Deconstruction also takes place in the tests themselves.  
++    { body: {topics: [firstTopic, secondTopic]} }
++
++This looks inside the body finds the topics key, then looks inside that and sets the first two items in the array to the variables frstTopic and secondTopic. If there is a third topic this can still be accessed by using topics[2].
++
++To use the Post, Put and Delete api's you will need postman https://www.getpostman.com/
 
 ### Routes
 
